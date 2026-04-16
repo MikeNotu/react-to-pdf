@@ -78,11 +78,11 @@ export const Invoice = () => {
                   minWidth: "5.25rem",
                 }}
               >
-                Name:
+                Service Call ID:
               </p>
               <input
                 type="text"
-                name="name"
+                name="Service Call ID"
                 placeholder="Input value here"
                 maxLength={80}
                 required
@@ -98,7 +98,524 @@ export const Invoice = () => {
                 }}
               />
             </div>
-
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Service Call ID:
+              </p>
+              <input
+                type="text"
+                name="Date"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Insurance:
+              </p>
+              <input
+                type="text"
+                name="Insurance"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Name:
+              </p>
+              <input
+                type="text"
+                name="Name"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Phone:
+              </p>
+              <input
+                type="text"
+                name="Phone"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Invoice:
+              </p>
+              <input
+                type="text"
+                name="Invoice"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Invoice:
+              </p>
+              <input
+                type="text"
+                name="Invoice"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Date:
+              </p>
+              <input
+                type="text"
+                name="Date"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Model:
+              </p>
+              <input
+                type="text"
+                name="Model"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                VIN:
+              </p>
+              <input
+                type="text"
+                name="VIN"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Original Mileage:
+              </p>
+              <input
+                type="text"
+                name="Original Mileage"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Current Mileage:
+              </p>
+              <input
+                type="text"
+                name="Current Mileage"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Transmission:
+              </p>
+              <input
+                type="text"
+                name="Transmission"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Tested:
+              </p>
+              <input
+                type="text"
+                name="Tested"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <p
+                className="h-12 inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Programming:
+              </p>
+              <input
+                type="text"
+                name="Programming"
+                placeholder="Input value here"
+                maxLength={80}
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  fontSize: "20px",
+                  display: "flex",
+                  height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
             <div
               className="mb-4 flex flex-row"
               style={{
@@ -116,7 +633,7 @@ export const Invoice = () => {
                   minWidth: "5.25rem",
                 }}
               >
-                Lines:
+                PER CUSTOMER:
               </p>
 
               {/* Editable input (hidden during export so PDF captures full content) */}
