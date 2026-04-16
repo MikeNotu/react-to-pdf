@@ -58,7 +58,7 @@ export const Invoice = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 flex flex-col items-center">
-      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-2xl">
+      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-6xl">
         <div ref={printRef} className="p-8 bg-white border border-gray-200">
           <form className="flex flex-col">
             <div
@@ -66,7 +66,6 @@ export const Invoice = () => {
               style={{
                 display: "flex",
                 alignItems: "center",
-                backgroundColor: "red",
               }}
             >
               <p
@@ -76,6 +75,7 @@ export const Invoice = () => {
                   fontWeight: "bold",
                   marginRight: "1rem",
                   marginTop: "0.5rem",
+                  minWidth: "5.25rem",
                 }}
               >
                 Name:
@@ -84,6 +84,7 @@ export const Invoice = () => {
                 type="text"
                 name="name"
                 placeholder="Input value here"
+                maxLength={80}
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -91,6 +92,9 @@ export const Invoice = () => {
                   fontSize: "20px",
                   display: "flex",
                   height: "20px",
+                  flex: 1,
+                  width: "100%",
+                  boxSizing: "border-box",
                 }}
               />
             </div>
@@ -116,12 +120,13 @@ export const Invoice = () => {
               </p>
 
               {/* Editable input (hidden during export so PDF captures full content) */}
-              <div style={{ width: "80%" }}>
+              <div style={{ flex: 1, width: "100%", height: "300px" }}>
                 {!isExporting ? (
                   <textarea
                     name="multiline"
                     placeholder="Up to 500 lines…"
                     value={multiline}
+                    maxLength={500}
                     onChange={(e) =>
                       setMultiline(clampToMaxLines(e.target.value))
                     }
@@ -129,7 +134,8 @@ export const Invoice = () => {
                     style={{
                       fontSize: "16px",
                       width: "100%",
-                      resize: "vertical",
+                      resize: "none",
+                      height: "100%",
                       padding: "0.5rem",
                       border: "1px solid #d1d5db",
                       borderRadius: "0.375rem",
@@ -157,17 +163,6 @@ export const Invoice = () => {
                     {multiline}
                   </div>
                 ) : null}
-
-                <div
-                  style={{
-                    marginTop: "0.25rem",
-                    fontSize: "12px",
-                    color: "#374151",
-                  }}
-                >
-                  {normalizeNewlines(multiline).split("\n").length}/{MAX_LINES}{" "}
-                  lines
-                </div>
               </div>
             </div>
           </form>
