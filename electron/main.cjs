@@ -16,6 +16,7 @@ function createWindow() {
       nodeIntegration: false,
     },
   });
+  mainWindow.maximize();
 
   if (isDev) {
     mainWindow.loadURL("http://localhost:5173");
