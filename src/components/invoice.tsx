@@ -256,7 +256,7 @@ export const Invoice = () => {
                   minWidth: "5.25rem",
                 }}
               >
-                Invoice Date:
+                Service Call Date:
               </p>
               <div style={{ flex: 1, width: "100%" }}>
                 <DatePicker
@@ -411,11 +411,11 @@ export const Invoice = () => {
                   minWidth: "5.25rem",
                 }}
               >
-                Invoice:
+                Email:
               </p>
               <input
                 type="text"
-                name="Invoice"
+                name="Email"
                 placeholder="----------"
                 maxLength={70}
                 required
@@ -485,7 +485,7 @@ export const Invoice = () => {
                   minWidth: "5.25rem",
                 }}
               >
-                Date of Incident:
+                Invoice Date:
               </p>
               <div style={{ flex: 1, width: "100%" }}>
                 <DatePicker
