@@ -1,15 +1,23 @@
 const { app, BrowserWindow } = require("electron");
+const fs = require("node:fs");
 const path = require("node:path");
 const url = require("node:url");
 
 const isDev = !app.isPackaged;
 
 function createWindow() {
+  const devIconIcoPath = path.join(__dirname, "..", "build", "icon.ico");
+  const devIconPngPath = path.join(__dirname, "..", "src", "assets", "favicon.png");
+  const iconPath = isDev
+    ? (fs.existsSync(devIconIcoPath) ? devIconIcoPath : devIconPngPath)
+    : path.join(process.resourcesPath, "icon.ico");
+
   const mainWindow = new BrowserWindow({
     width: 1280,
     height: 900,
     minWidth: 960,
     minHeight: 720,
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
       contextIsolation: true,
