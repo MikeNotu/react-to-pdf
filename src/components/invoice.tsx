@@ -1,13 +1,32 @@
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import React from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export const Invoice = () => {
   const printRef = React.useRef<HTMLDivElement | null>(null);
 
-  const [name, setName] = React.useState("");
+  const [formData, setFormData] = React.useState({
+    serviceCallId: "",
+    insurance: "",
+    customerName: "",
+    phone: "",
+    invoicePrimary: "",
+    invoiceSecondary: "",
+    model: "",
+    vin: "",
+    originalMileage: "",
+    currentMileage: "",
+    transmission: "",
+    tested: "",
+    programming: "",
+  });
   const [multiline, setMultiline] = React.useState("");
   const [isExporting, setIsExporting] = React.useState(false);
+
+  const [dateOfService, setDateOfService] = React.useState<Date>(new Date());
+  const [dateOfIncident, setDateOfIncident] = React.useState<Date | null>(null);
 
   const MAX_LINES = 500;
 
@@ -18,6 +37,62 @@ export const Invoice = () => {
     const lines = normalized.split("\n");
     if (lines.length <= MAX_LINES) return normalized;
     return lines.slice(0, MAX_LINES).join("\n");
+  };
+
+  const updateField =
+    (field: keyof typeof formData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((current) => ({
+        ...current,
+        [field]: e.target.value,
+      }));
+    };
+
+  const savePdfWithPicker = async (blob: Blob, filename: string) => {
+    const windowWithPicker = window as typeof window & {
+      showSaveFilePicker?: (options: {
+        suggestedName?: string;
+        types?: Array<{
+          description: string;
+          accept: Record<string, string[]>;
+        }>;
+      }) => Promise<{
+        createWritable: () => Promise<{
+          write: (data: Blob) => Promise<void>;
+          close: () => Promise<void>;
+        }>;
+      }>;
+    };
+
+    if (!windowWithPicker.showSaveFilePicker) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+
+    try {
+      const handle = await windowWithPicker.showSaveFilePicker({
+        suggestedName: filename,
+        types: [
+          {
+            description: "PDF files",
+            accept: { "application/pdf": [".pdf"] },
+          },
+        ],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+      throw error;
+    }
   };
 
   const handleDownloadPdf = async () => {
@@ -50,19 +125,31 @@ export const Invoice = () => {
       const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
 
       pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save("examplepdf.pdf");
+      const pdfBlob = pdf.output("blob");
+      await savePdfWithPicker(pdfBlob, "service.pdf");
     } finally {
       setIsExporting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8 flex flex-col items-center">
-      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-6xl">
-        <div ref={printRef} className="p-8 bg-white border border-gray-200">
+    <div className="h-screen bg-gray-100 p-4 flex flex-col items-center overflow-hidden">
+      <div className="bg-white shadow-lg rounded-lg p-4 w-full max-w-6xl flex flex-col items-center overflow-hidden">
+        <div
+          ref={printRef}
+          className="bg-white border border-gray-200 overflow-hidden"
+          style={{
+            height: "calc(100vh - 140px)",
+            aspectRatio: "22 / 28",
+            maxWidth: "100%",
+            width: "auto",
+            padding: "16px",
+            boxSizing: "border-box",
+          }}
+        >
           <form className="flex flex-col">
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -86,8 +173,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.serviceCallId}
+                onChange={updateField("serviceCallId")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -99,7 +186,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -115,28 +202,35 @@ export const Invoice = () => {
                   minWidth: "5.25rem",
                 }}
               >
-                Service Call ID:
+                Invoice Date:
               </p>
-              <input
-                type="text"
-                name="Date"
-                placeholder="Input value here"
-                maxLength={80}
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                style={{
-                  fontSize: "20px",
-                  display: "flex",
-                  height: "20px",
-                  flex: 1,
-                  width: "100%",
-                  boxSizing: "border-box",
-                }}
-              />
+              <div style={{ flex: 1, width: "100%" }}>
+                <DatePicker
+                  selected={dateOfService}
+                  onChange={(date: Date | null) =>
+                    date && setDateOfService(date)
+                  }
+                  dateFormat="MM/dd/yy"
+                  required
+                  wrapperClassName="w-full"
+                  customInput={
+                    <input
+                      name="dateOfService"
+                      className="w-full"
+                      style={{
+                        fontSize: "20px",
+                        display: "flex",
+                        height: "20px",
+                        width: "100%",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                  }
+                />
+              </div>
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -160,8 +254,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.insurance}
+                onChange={updateField("insurance")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -173,7 +267,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -197,8 +291,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.customerName}
+                onChange={updateField("customerName")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -210,7 +304,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -234,8 +328,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.phone}
+                onChange={updateField("phone")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -247,7 +341,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -271,8 +365,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.invoicePrimary}
+                onChange={updateField("invoicePrimary")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -284,7 +378,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -308,8 +402,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.invoiceSecondary}
+                onChange={updateField("invoiceSecondary")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -321,7 +415,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -337,28 +431,34 @@ export const Invoice = () => {
                   minWidth: "5.25rem",
                 }}
               >
-                Date:
+                Date of Incident:
               </p>
-              <input
-                type="text"
-                name="Date"
-                placeholder="Input value here"
-                maxLength={80}
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                style={{
-                  fontSize: "20px",
-                  display: "flex",
-                  height: "20px",
-                  flex: 1,
-                  width: "100%",
-                  boxSizing: "border-box",
-                }}
-              />
+              <div style={{ flex: 1, width: "100%" }}>
+                <DatePicker
+                  selected={dateOfIncident}
+                  onChange={(date: Date | null) => setDateOfIncident(date)}
+                  dateFormat="MM/dd/yy"
+                  required
+                  placeholderText="MM/DD/YY"
+                  wrapperClassName="w-full"
+                  customInput={
+                    <input
+                      name="dateOfIncident"
+                      className="w-full"
+                      style={{
+                        fontSize: "20px",
+                        display: "flex",
+                        height: "20px",
+                        width: "100%",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                  }
+                />
+              </div>
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -382,8 +482,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.model}
+                onChange={updateField("model")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -395,7 +495,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -419,8 +519,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.vin}
+                onChange={updateField("vin")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -432,7 +532,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -456,8 +556,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.originalMileage}
+                onChange={updateField("originalMileage")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -469,7 +569,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -493,8 +593,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.currentMileage}
+                onChange={updateField("currentMileage")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -506,7 +606,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -530,8 +630,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.transmission}
+                onChange={updateField("transmission")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -543,7 +643,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -567,8 +667,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.tested}
+                onChange={updateField("tested")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -580,7 +680,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -604,8 +704,8 @@ export const Invoice = () => {
                 placeholder="Input value here"
                 maxLength={80}
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.programming}
+                onChange={updateField("programming")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
@@ -617,7 +717,7 @@ export const Invoice = () => {
               />
             </div>
             <div
-              className="mb-4 flex flex-row"
+              className="mb-2 flex flex-row"
               style={{
                 display: "flex",
                 alignItems: "flex-start",
