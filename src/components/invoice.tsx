@@ -11,7 +11,7 @@ export const Invoice = () => {
 
   const [formData, setFormData] = React.useState({
     serviceCallId: "",
-    insurance: "",
+    supplier: "",
     customerName: "",
     phone: "",
     invoicePrimary: "",
@@ -300,16 +300,16 @@ export const Invoice = () => {
                   minWidth: "5.25rem",
                 }}
               >
-                Insurance:
+                Supplier:
               </p>
               <input
                 type="text"
-                name="Insurance"
+                name="Supplier"
                 placeholder="----------"
                 maxLength={70}
                 required
-                value={formData.insurance}
-                onChange={updateField("insurance")}
+                value={formData.supplier}
+                onChange={updateField("supplier")}
                 style={{
                   fontSize: "20px",
                   display: "flex",
