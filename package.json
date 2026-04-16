@@ -13,7 +13,7 @@
     "generate:icon": "node scripts/generate-electron-icon.mjs",
     "patch:exe-icon": "node scripts/patch-exe-icon.mjs",
     "build": "tsc -b && vite build",
-    "build:desktop": "npm run generate:icon && npm run build && electron-builder && npm run patch:exe-icon",
+    "build:desktop": "npm run generate:icon && npm run build && electron-builder",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "electron ."
@@ -51,6 +51,7 @@
     "appId": "com.reacttopdf.app",
     "productName": "ReactToPDF",
     "icon": "build/icon.png",
+    "afterPack": "scripts/after-pack.mjs",
     "directories": {
       "output": "release"
     },
