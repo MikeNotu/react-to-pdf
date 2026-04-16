@@ -137,22 +137,31 @@ export const Invoice = () => {
       <div className="bg-white shadow-lg rounded-lg p-4 w-full max-w-6xl flex flex-col items-center overflow-hidden">
         <div
           ref={printRef}
-          className="bg-white border border-gray-200 overflow-hidden"
+          className="bg-white border border-gray-200"
           style={{
             height: "calc(100vh - 140px)",
             aspectRatio: "22 / 28",
             maxWidth: "100%",
             width: "auto",
-            padding: "16px",
+            padding: "10px",
             boxSizing: "border-box",
+            overflowY: "hidden",
+            overflowX: "hidden",
           }}
         >
-          <form className="flex flex-col">
+          <form
+            className="flex flex-col"
+            style={{
+              transform: "scale(0.7)",
+              transformOrigin: "top left",
+              width: "142.857%",
+            }}
+          >
             <div
               className="mb-2 flex flex-row"
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: "baseline",
               }}
             >
               <p
@@ -170,7 +179,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="Service Call ID"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.serviceCallId}
@@ -189,7 +198,7 @@ export const Invoice = () => {
               className="mb-2 flex flex-row"
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: "baseline",
               }}
             >
               <p
@@ -233,7 +242,7 @@ export const Invoice = () => {
               className="mb-2 flex flex-row"
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: "baseline",
               }}
             >
               <p
@@ -251,7 +260,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="Insurance"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.insurance}
@@ -270,7 +279,7 @@ export const Invoice = () => {
               className="mb-2 flex flex-row"
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: "baseline",
               }}
             >
               <p
@@ -288,7 +297,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="Name"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.customerName}
@@ -307,7 +316,7 @@ export const Invoice = () => {
               className="mb-2 flex flex-row"
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: "baseline",
               }}
             >
               <p
@@ -325,7 +334,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="Phone"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.phone}
@@ -344,7 +353,7 @@ export const Invoice = () => {
               className="mb-2 flex flex-row"
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: "baseline",
               }}
             >
               <p
@@ -362,7 +371,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="Invoice"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.invoicePrimary}
@@ -381,7 +390,7 @@ export const Invoice = () => {
               className="mb-2 flex flex-row"
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: "baseline",
               }}
             >
               <p
@@ -399,7 +408,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="Invoice"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.invoiceSecondary}
@@ -418,7 +427,7 @@ export const Invoice = () => {
               className="mb-2 flex flex-row"
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: "baseline",
               }}
             >
               <p
@@ -461,7 +470,7 @@ export const Invoice = () => {
               className="mb-2 flex flex-row"
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: "baseline",
               }}
             >
               <p
@@ -479,7 +488,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="Model"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.model}
@@ -498,7 +507,7 @@ export const Invoice = () => {
               className="mb-2 flex flex-row"
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: "baseline",
               }}
             >
               <p
@@ -516,7 +525,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="VIN"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.vin}
@@ -535,7 +544,7 @@ export const Invoice = () => {
               className="mb-2 flex flex-row"
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: "baseline",
               }}
             >
               <p
@@ -553,7 +562,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="Original Mileage"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.originalMileage}
@@ -590,7 +599,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="Current Mileage"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.currentMileage}
@@ -627,7 +636,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="Transmission"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.transmission}
@@ -664,7 +673,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="Tested"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.tested}
@@ -701,7 +710,7 @@ export const Invoice = () => {
               <input
                 type="text"
                 name="Programming"
-                placeholder="Input value here"
+                placeholder="----------"
                 maxLength={80}
                 required
                 value={formData.programming}
@@ -737,7 +746,7 @@ export const Invoice = () => {
               </p>
 
               {/* Editable input (hidden during export so PDF captures full content) */}
-              <div style={{ flex: 1, width: "100%", height: "300px" }}>
+              <div style={{ flex: 1, width: "100%", height: "180px" }}>
                 {!isExporting ? (
                   <textarea
                     name="multiline"
@@ -747,7 +756,7 @@ export const Invoice = () => {
                     onChange={(e) =>
                       setMultiline(clampToMaxLines(e.target.value))
                     }
-                    rows={10}
+                    rows={8}
                     style={{
                       fontSize: "16px",
                       width: "100%",
