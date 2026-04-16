@@ -6,6 +6,8 @@ import "react-datepicker/dist/react-datepicker.css";
 
 export const Invoice = () => {
   const printRef = React.useRef<HTMLDivElement | null>(null);
+  const formRef = React.useRef<HTMLFormElement | null>(null);
+  const downloadButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
   const [formData, setFormData] = React.useState({
     serviceCallId: "",
@@ -132,6 +134,47 @@ export const Invoice = () => {
     }
   };
 
+  const handleInputEnter = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key !== "Enter" || e.shiftKey) {
+      return;
+    }
+
+    if (!(e.target instanceof HTMLInputElement)) {
+      return;
+    }
+
+    const form = formRef.current;
+    if (!form) {
+      return;
+    }
+
+    const focusableFields = Array.from(
+      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
+        "input, textarea",
+      ),
+    ).filter(
+      (field) =>
+        !field.disabled &&
+        (field instanceof HTMLTextAreaElement || field.type !== "hidden") &&
+        field.offsetParent,
+    );
+
+    const currentIndex = focusableFields.indexOf(e.target);
+    if (currentIndex === -1) {
+      return;
+    }
+
+    e.preventDefault();
+
+    const nextField = focusableFields[currentIndex + 1];
+    if (nextField) {
+      nextField.focus();
+      return;
+    }
+
+    downloadButtonRef.current?.focus();
+  };
+
   return (
     <div className="h-screen bg-gray-100 p-4 flex flex-col items-center overflow-hidden">
       <div className="bg-white shadow-lg rounded-lg p-4 w-full max-w-6xl flex flex-col items-center overflow-hidden">
@@ -150,6 +193,8 @@ export const Invoice = () => {
           }}
         >
           <form
+            ref={formRef}
+            onKeyDown={handleInputEnter}
             className="flex flex-col"
             style={{
               transform: "scale(0.7)",
@@ -180,7 +225,7 @@ export const Invoice = () => {
                 type="text"
                 name="Service Call ID"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.serviceCallId}
                 onChange={updateField("serviceCallId")}
@@ -261,7 +306,7 @@ export const Invoice = () => {
                 type="text"
                 name="Insurance"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.insurance}
                 onChange={updateField("insurance")}
@@ -298,7 +343,7 @@ export const Invoice = () => {
                 type="text"
                 name="Name"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.customerName}
                 onChange={updateField("customerName")}
@@ -335,7 +380,7 @@ export const Invoice = () => {
                 type="text"
                 name="Phone"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.phone}
                 onChange={updateField("phone")}
@@ -372,7 +417,7 @@ export const Invoice = () => {
                 type="text"
                 name="Invoice"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.invoicePrimary}
                 onChange={updateField("invoicePrimary")}
@@ -409,7 +454,7 @@ export const Invoice = () => {
                 type="text"
                 name="Invoice"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.invoiceSecondary}
                 onChange={updateField("invoiceSecondary")}
@@ -489,7 +534,7 @@ export const Invoice = () => {
                 type="text"
                 name="Model"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.model}
                 onChange={updateField("model")}
@@ -526,7 +571,7 @@ export const Invoice = () => {
                 type="text"
                 name="VIN"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.vin}
                 onChange={updateField("vin")}
@@ -563,7 +608,7 @@ export const Invoice = () => {
                 type="text"
                 name="Original Mileage"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.originalMileage}
                 onChange={updateField("originalMileage")}
@@ -600,7 +645,7 @@ export const Invoice = () => {
                 type="text"
                 name="Current Mileage"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.currentMileage}
                 onChange={updateField("currentMileage")}
@@ -637,7 +682,7 @@ export const Invoice = () => {
                 type="text"
                 name="Transmission"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.transmission}
                 onChange={updateField("transmission")}
@@ -674,7 +719,7 @@ export const Invoice = () => {
                 type="text"
                 name="Tested"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.tested}
                 onChange={updateField("tested")}
@@ -711,7 +756,7 @@ export const Invoice = () => {
                 type="text"
                 name="Programming"
                 placeholder="----------"
-                maxLength={80}
+                maxLength={70}
                 required
                 value={formData.programming}
                 onChange={updateField("programming")}
@@ -796,6 +841,7 @@ export const Invoice = () => {
 
         <div className="mt-6 flex justify-center">
           <button
+            ref={downloadButtonRef}
             onClick={handleDownloadPdf}
             className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
           >
