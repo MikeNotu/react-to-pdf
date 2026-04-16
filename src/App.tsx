@@ -1,4 +1,4 @@
-import Invoice from "./components/invoice";
+import { Invoice } from "./components/invoice";
 
 function App() {
   return <Invoice />;

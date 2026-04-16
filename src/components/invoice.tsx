@@ -2,8 +2,23 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import React from "react";
 
-export default function Invoice() {
-  const printRef = React.useRef(null);
+export const Invoice = () => {
+  const printRef = React.useRef<HTMLDivElement | null>(null);
+
+  const [name, setName] = React.useState("");
+  const [multiline, setMultiline] = React.useState("");
+  const [isExporting, setIsExporting] = React.useState(false);
+
+  const MAX_LINES = 500;
+
+  const normalizeNewlines = (value: string) => value.replace(/\r\n/g, "\n");
+
+  const clampToMaxLines = (value: string) => {
+    const normalized = normalizeNewlines(value);
+    const lines = normalized.split("\n");
+    if (lines.length <= MAX_LINES) return normalized;
+    return lines.slice(0, MAX_LINES).join("\n");
+  };
 
   const handleDownloadPdf = async () => {
     const element = printRef.current;
@@ -11,24 +26,34 @@ export default function Invoice() {
       return;
     }
 
-    const canvas = await html2canvas(element, {
-      scale: 2,
-    });
-    const data = canvas.toDataURL("image/png");
+    setIsExporting(true);
 
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "px",
-      format: "a4",
-    });
+    try {
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => resolve()),
+      );
 
-    const imgProperties = pdf.getImageProperties(data);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
+      const canvas = await html2canvas(element, {
+        scale: 2,
+      });
+      const data = canvas.toDataURL("image/png");
 
-    const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: "letter",
+      });
 
-    pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("examplepdf.pdf");
+      const imgProperties = pdf.getImageProperties(data);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+
+      const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+
+      pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save("examplepdf.pdf");
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -36,14 +61,21 @@ export default function Invoice() {
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-2xl">
         <div ref={printRef} className="p-8 bg-white border border-gray-200">
           <form className="flex flex-col">
-            <div className="mb-4 flex flex-row ">
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                backgroundColor: "red",
+              }}
+            >
               <p
-                className="h-12 inline-block align-middle mr-2"
+                className="h-12 inline-block align-middle"
                 style={{
-                  fontSize: "20px",
+                  fontSize: "24px",
                   fontWeight: "bold",
-                  display: "flex",
-                  alignItems: "start",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
                 }}
               >
                 Name:
@@ -52,97 +84,93 @@ export default function Invoice() {
                 type="text"
                 name="name"
                 placeholder="Input value here"
-                className="h-12 "
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 style={{
                   fontSize: "20px",
                   display: "flex",
-                  marginTop: "0.5rem",
-                  // alignItems: "end",
+                  height: "20px",
                 }}
               />
             </div>
-            <div>
-              <label>
-                Name:
-                <input type="text" name="name" />
-              </label>
-            </div>{" "}
-            <div>
-              <label>
-                Name:
-                <input type="text" name="name" />
-              </label>
-            </div>
-            {/* <input type="submit" value="Submit" /> */}
-          </form>
 
-          {/* <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800">INVOICE</h1>
-              <p className="text-sm text-gray-600">Invoice #INV-2024-001</p>
-            </div>
-            <div className="text-right">
-              <h2 className="font-semibold">Company Name</h2>
-              <p className="text-sm text-gray-600">
-                123 Business Street
-                <br />
-                City, State 12345
+            <div
+              className="mb-4 flex flex-row"
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+              }}
+            >
+              <p
+                className="inline-block align-middle"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginRight: "1rem",
+                  marginTop: "0.5rem",
+                  minWidth: "5.25rem",
+                }}
+              >
+                Lines:
               </p>
+
+              {/* Editable input (hidden during export so PDF captures full content) */}
+              <div style={{ width: "80%" }}>
+                {!isExporting ? (
+                  <textarea
+                    name="multiline"
+                    placeholder="Up to 500 lines…"
+                    value={multiline}
+                    onChange={(e) =>
+                      setMultiline(clampToMaxLines(e.target.value))
+                    }
+                    rows={10}
+                    style={{
+                      fontSize: "16px",
+                      width: "100%",
+                      resize: "vertical",
+                      padding: "0.5rem",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "0.375rem",
+                      boxSizing: "border-box",
+                    }}
+                  />
+                ) : null}
+
+                {/* PDF-rendered view (shown during export; preserves newlines) */}
+                {isExporting ? (
+                  <div
+                    className="pdf-content"
+                    style={{
+                      fontSize: "16px",
+                      width: "100%",
+                      padding: "0.5rem",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "0.375rem",
+                      boxSizing: "border-box",
+                      whiteSpace: "pre-wrap",
+                      overflowWrap: "anywhere",
+                      minHeight: "2.5rem",
+                    }}
+                  >
+                    {multiline}
+                  </div>
+                ) : null}
+
+                <div
+                  style={{
+                    marginTop: "0.25rem",
+                    fontSize: "12px",
+                    color: "#374151",
+                  }}
+                >
+                  {normalizeNewlines(multiline).split("\n").length}/{MAX_LINES}{" "}
+                  lines
+                </div>
+              </div>
             </div>
-          </div>
-
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold mb-4">Bill To:</h3>
-            <p className="text-gray-700">
-              Client Name
-              <br />
-              Client Address
-              <br />
-              City, State ZIP
-            </p>
-          </div>
-
-          <table className="w-full mb-8 border-collapse">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border p-2 text-left">Description</th>
-                <th className="border p-2 text-right">Quantity</th>
-                <th className="border p-2 text-right">Unit Price</th>
-                <th className="border p-2 text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border p-2">Web Design Service</td>
-                <td className="border p-2 text-right">1</td>
-                <td className="border p-2 text-right">$1,500.00</td>
-                <td className="border p-2 text-right">$1,500.00</td>
-              </tr>
-              <tr>
-                <td className="border p-2">Hosting Setup</td>
-                <td className="border p-2 text-right">1</td>
-                <td className="border p-2 text-right">$250.00</td>
-                <td className="border p-2 text-right">$250.00</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div className="flex justify-end">
-            <div className="w-64">
-              <div className="flex justify-between mb-2">
-                <span>Subtotal:</span>
-                <span>$1,750.00</span>
-              </div>
-              <div className="flex justify-between mb-2">
-                <span>Tax (10%):</span>
-                <span>$175.00</span>
-              </div>
-              <div className="flex justify-between font-bold text-lg">
-                <span>Total:</span>
-                <span>$1,925.00</span>
-              </div>
-            </div>
-          </div> */}
+          </form>
         </div>
 
         <div className="mt-6 flex justify-center">
@@ -156,4 +184,4 @@ export default function Invoice() {
       </div>
     </div>
   );
-}
+};
