@@ -337,11 +337,11 @@ export const Invoice = () => {
                   minWidth: "5.25rem",
                 }}
               >
-                Name:
+                Repair Facility:
               </p>
               <input
                 type="text"
-                name="Name"
+                name="Repair Facility"
                 placeholder="----------"
                 maxLength={70}
                 required
