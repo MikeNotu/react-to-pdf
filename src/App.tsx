@@ -1,4 +1,4 @@
-import { Invoice } from "./components/invoice";
+import { Invoice } from "./screens/invoice";
 
 function App() {
   return <Invoice />;
