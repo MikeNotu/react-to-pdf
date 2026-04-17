@@ -26,10 +26,7 @@ export function LabeledTextInputRow({
   labelClassName = "h-12 inline-block align-middle",
 }: LabeledTextInputRowProps) {
   return (
-    <div
-      className="mb-2 flex flex-row"
-      style={rowStyle(alignItems)}
-    >
+    <div className="mb-2 flex flex-row" style={rowStyle(alignItems)}>
       <p className={labelClassName} style={labelBaseStyle}>
         {label}:
       </p>

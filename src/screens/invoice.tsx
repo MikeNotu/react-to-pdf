@@ -189,11 +189,7 @@ export const Invoice = () => {
           className="bg-white border border-gray-200"
           style={printRefStyle}
         >
-          <form
-            ref={formRef}
-            className="flex flex-col"
-            style={formScaleStyle}
-          >
+          <form ref={formRef} className="flex flex-col" style={formScaleStyle}>
             <LabeledTextInputRow
               label="Service Call ID"
               name="Service Call ID"
