@@ -1,6 +1,7 @@
 import type * as React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { Invoice } from "../../screens/invoice";
+import { renderWithProviders } from "../testUtils";
 
 jest.mock("../../components/LabeledTextInputRow", () => ({
   LabeledTextInputRow: ({
@@ -53,6 +54,21 @@ jest.mock("../../components/LabeledDatePickerRow", () => ({
   ),
 }));
 
+jest.mock("../../utils/readMediaFile", () => ({
+  isMediaFile: (file: File) =>
+    /\.(jpe?g|png|pdf)$/i.test(file.name) ||
+    file.type === "application/pdf" ||
+    file.type.startsWith("image/"),
+  readMediaFile: jest.fn(async () => "data:image/png;base64,mock"),
+  defaultLogoPlacement: jest.fn(async (src: string) => ({
+    src,
+    x: 650,
+    y: 16,
+    width: 120,
+    height: 80,
+  })),
+}));
+
 jest.mock("../../components/PerCustomerField", () => ({
   PerCustomerField: ({
     multiline,
@@ -76,15 +92,29 @@ describe("Invoice screen", () => {
   });
 
   it("renders the invoice form and download button", () => {
-    render(<Invoice />);
+    renderWithProviders(<Invoice />);
 
     expect(screen.getByRole("button", { name: /download pdf/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /add logo/i })).toBeInTheDocument();
     expect(screen.getByTestId("row-Service Call ID")).toBeInTheDocument();
     expect(screen.getByTestId("per-customer-field")).toBeInTheDocument();
   });
 
+  it("shows remove logo after a logo file is selected", async () => {
+    renderWithProviders(<Invoice />);
+
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const file = new File(["logo"], "logo.png", { type: "image/png" });
+
+    fireEvent.change(input, { target: { files: [file] } });
+
+    expect(await screen.findByRole("button", { name: /remove logo/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /change logo/i })).toBeInTheDocument();
+    expect(screen.getByAltText("Company logo")).toBeInTheDocument();
+  });
+
   it("moves focus to the next field when Enter is pressed", () => {
-    render(<Invoice />);
+    renderWithProviders(<Invoice />);
 
     const firstField = screen.getByLabelText("Service Call ID:");
     const nextField = screen.getByLabelText("Service Call Date:");
@@ -96,7 +126,7 @@ describe("Invoice screen", () => {
   });
 
   it("moves focus to Download PDF from the last field", () => {
-    render(<Invoice />);
+    renderWithProviders(<Invoice />);
 
     const multiline = screen.getByPlaceholderText("Up to 500 lines…");
     const downloadButton = screen.getByRole("button", { name: /download pdf/i });

@@ -1,15 +1,23 @@
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import React from "react";
+import { MediaFilePickerButton } from "../components/MediaFilePickerButton";
+import { PlacedImage } from "../components/PlacedImage";
 import { LabeledDatePickerRow } from "../components/LabeledDatePickerRow";
 import { LabeledTextInputRow } from "../components/LabeledTextInputRow";
 import { PerCustomerField } from "../components/PerCustomerField";
+import { useDocument } from "../context/DocumentContext";
+import { letterPageBounds, letterPageStyle } from "../constants/letterPageStyles";
+import { MEDIA_FILE_ERROR } from "../constants/mediaFiles";
+import {
+  defaultLogoPlacement,
+  isMediaFile,
+  readMediaFile,
+  type ImagePlacement,
+} from "../utils/readMediaFile";
 
 export const Invoice = () => {
   const printRef = React.useRef<HTMLDivElement | null>(null);
   const formRef = React.useRef<HTMLFormElement | null>(null);
   const downloadButtonRef = React.useRef<HTMLButtonElement | null>(null);
-
   const [formData, setFormData] = React.useState({
     serviceCallId: "",
     supplier: "",
@@ -26,7 +34,11 @@ export const Invoice = () => {
     programming: "",
   });
   const [multiline, setMultiline] = React.useState("");
-  const [isExporting, setIsExporting] = React.useState(false);
+  const [logoPlacement, setLogoPlacement] = React.useState<ImagePlacement | null>(
+    null,
+  );
+
+  const { isExporting, registerInvoicePrintRef, downloadPdf } = useDocument();
 
   const [dateOfService, setDateOfService] = React.useState<Date>(new Date());
   const [dateOfIncident, setDateOfIncident] = React.useState<Date | null>(null);
@@ -51,88 +63,26 @@ export const Invoice = () => {
       }));
     };
 
-  const savePdfWithPicker = async (blob: Blob, filename: string) => {
-    const windowWithPicker = globalThis as typeof globalThis & {
-      showSaveFilePicker?: (options: {
-        suggestedName?: string;
-        types?: Array<{
-          description: string;
-          accept: Record<string, string[]>;
-        }>;
-      }) => Promise<{
-        createWritable: () => Promise<{
-          write: (data: Blob) => Promise<void>;
-          close: () => Promise<void>;
-        }>;
-      }>;
-    };
+  const handleLogoFilesSelected = async (files: File[]) => {
+    const file = files[0];
+    if (!file) return;
 
-    if (!windowWithPicker.showSaveFilePicker) {
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = filename;
-      link.click();
-      URL.revokeObjectURL(url);
-      return;
+    if (!isMediaFile(file)) {
+      throw new Error(MEDIA_FILE_ERROR);
     }
 
-    try {
-      const handle = await windowWithPicker.showSaveFilePicker({
-        suggestedName: filename,
-        types: [
-          {
-            description: "PDF files",
-            accept: { "application/pdf": [".pdf"] },
-          },
-        ],
-      });
-      const writable = await handle.createWritable();
-      await writable.write(blob);
-      await writable.close();
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") {
-        return;
-      }
-      throw error;
-    }
+    const src = await readMediaFile(file);
+    const placement = await defaultLogoPlacement(src, letterPageBounds);
+    setLogoPlacement(placement);
   };
 
-  const handleDownloadPdf = async () => {
-    const element = printRef.current;
-    if (!element) {
-      return;
-    }
+  const handleRemoveLogo = () => {
+    setLogoPlacement(null);
+  };
 
-    setIsExporting(true);
-
-    try {
-      await new Promise<void>((resolve) =>
-        requestAnimationFrame(() => resolve()),
-      );
-
-      const canvas = await html2canvas(element, {
-        scale: 2,
-      });
-      const data = canvas.toDataURL("image/png");
-
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "px",
-        format: "letter",
-      });
-
-      const imgProperties = pdf.getImageProperties(data);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-
-      const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
-
-      pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
-      const pdfBlob = pdf.output("blob");
-      await savePdfWithPicker(pdfBlob, "service.pdf");
-    } finally {
-      setIsExporting(false);
-    }
+  const setPrintRef = (element: HTMLDivElement | null) => {
+    printRef.current = element;
+    registerInvoicePrintRef(element);
   };
 
   React.useEffect(() => {
@@ -182,14 +132,24 @@ export const Invoice = () => {
   }, []);
 
   return (
-    <div className="h-screen bg-gray-100 p-4 flex flex-col items-center overflow-hidden">
+    <div className="flex-1 bg-gray-100 px-4 pb-4 flex flex-col items-center overflow-hidden">
       <div className="bg-white shadow-lg rounded-lg p-4 w-full max-w-6xl flex flex-col items-center overflow-hidden">
-        <div
-          ref={printRef}
-          className="bg-white border border-gray-200"
-          style={printRefStyle}
-        >
-          <form ref={formRef} className="flex flex-col" style={formScaleStyle}>
+        <div className="w-full overflow-auto flex justify-center max-h-[calc(100vh-12rem)]">
+          <div
+            ref={setPrintRef}
+            className="bg-white border border-gray-200 shrink-0"
+            style={letterPageStyle}
+          >
+            {logoPlacement ? (
+              <PlacedImage
+                placement={logoPlacement}
+                onPlacementChange={setLogoPlacement}
+                isExporting={isExporting}
+                bounds={letterPageBounds}
+                alt="Company logo"
+              />
+            ) : null}
+            <form ref={formRef} className="flex flex-col" style={formScaleStyle}>
             <LabeledTextInputRow
               label="Service Call ID"
               name="Service Call ID"
@@ -320,12 +280,27 @@ export const Invoice = () => {
               clampToMaxLines={clampToMaxLines}
             />
           </form>
+          </div>
         </div>
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <MediaFilePickerButton
+            label={logoPlacement ? "Change Logo" : "Add Logo"}
+            onFilesSelected={handleLogoFilesSelected}
+          />
+          {logoPlacement ? (
+            <button
+              type="button"
+              onClick={handleRemoveLogo}
+              className="flex items-center bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition duration-300"
+            >
+              Remove Logo
+            </button>
+          ) : null}
           <button
             ref={downloadButtonRef}
-            onClick={handleDownloadPdf}
+            type="button"
+            onClick={downloadPdf}
             className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
           >
             Download PDF
@@ -334,17 +309,6 @@ export const Invoice = () => {
       </div>
     </div>
   );
-};
-
-const printRefStyle: React.CSSProperties = {
-  height: "calc(100vh - 140px)",
-  aspectRatio: "22 / 28",
-  maxWidth: "100%",
-  width: "auto",
-  padding: "10px",
-  boxSizing: "border-box",
-  overflowY: "hidden",
-  overflowX: "hidden",
 };
 
 const formScaleStyle: React.CSSProperties = {
