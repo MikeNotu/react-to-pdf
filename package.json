@@ -1,5 +1,6 @@
 {
   "name": "my-app",
+  "homepage": "https://mikenotu.github.io/react-to-pdf",
   "private": true,
   "version": "0.0.0",
   "description": "Service Call Form with PDF export functionality",
@@ -19,6 +20,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "start": "electron ."
   },
   "dependencies": {
