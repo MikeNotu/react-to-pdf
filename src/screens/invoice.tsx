@@ -30,10 +30,12 @@ export const Invoice = () => {
     originalMileage: "",
     currentMileage: "",
     transmission: "",
+    serialNumber: "",
     tested: "",
     programming: "",
   });
-  const [multiline, setMultiline] = React.useState("");
+  const [perCustomer, setPerCustomer] = React.useState("");
+  const [activities, setActivities] = React.useState("");
   const [logoPlacement, setLogoPlacement] = React.useState<ImagePlacement | null>(
     null,
   );
@@ -43,15 +45,12 @@ export const Invoice = () => {
   const [dateOfService, setDateOfService] = React.useState<Date>(new Date());
   const [dateOfIncident, setDateOfIncident] = React.useState<Date | null>(null);
 
-  const MAX_LINES = 500;
-
   const normalizeNewlines = (value: string) => value.split("\r\n").join("\n");
 
-  const clampToMaxLines = (value: string) => {
+  const clampToMaxLength = (value: string, maxLength: number) => {
     const normalized = normalizeNewlines(value);
-    const lines = normalized.split("\n");
-    if (lines.length <= MAX_LINES) return normalized;
-    return lines.slice(0, MAX_LINES).join("\n");
+    if (normalized.length <= maxLength) return normalized;
+    return normalized.slice(0, maxLength);
   };
 
   const updateField =
@@ -256,6 +255,15 @@ export const Invoice = () => {
               alignItems="center"
             />
             <LabeledTextInputRow
+              label="Serial Number"
+              name="Serial Number"
+              value={formData.serialNumber}
+              onChange={updateField("serialNumber")}
+              placeholder="----------"
+              maxLength={20}
+              alignItems="center"
+            />
+            <LabeledTextInputRow
               label="Tested"
               name="Tested"
               value={formData.tested}
@@ -274,10 +282,26 @@ export const Invoice = () => {
               alignItems="center"
             />
             <PerCustomerField
+              label="PER CUSTOMER"
+              name="perCustomer"
               isExporting={isExporting}
-              multiline={multiline}
-              onChangeMultiline={setMultiline}
-              clampToMaxLines={clampToMaxLines}
+              value={perCustomer}
+              maxLength={500}
+              rows={3}
+              height={92}
+              onChange={setPerCustomer}
+              clampValue={clampToMaxLength}
+            />
+            <PerCustomerField
+              label="ACTIVITIES"
+              name="activities"
+              isExporting={isExporting}
+              value={activities}
+              maxLength={600}
+              rows={3}
+              height={92}
+              onChange={setActivities}
+              clampValue={clampToMaxLength}
             />
           </form>
           </div>
@@ -312,7 +336,7 @@ export const Invoice = () => {
 };
 
 const formScaleStyle: React.CSSProperties = {
-  transform: "scale(0.7)",
+  transform: "scale(0.68)",
   transformOrigin: "top left",
-  width: "142.857%",
+  width: "147.059%",
 };

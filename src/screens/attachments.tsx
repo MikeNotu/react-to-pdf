@@ -52,6 +52,9 @@ export const Attachments = () => {
     );
   };
 
+  const isPdfFile = (file: File) =>
+    file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+
   const handleFilesSelected = async (files: File[]) => {
     const pageId = activePageId;
     const invalid = files.find((file) => !isMediaFile(file));
@@ -63,16 +66,25 @@ export const Attachments = () => {
     if (!page) return;
 
     const startIndex = page.items.length;
+    let nextIndex = startIndex;
     const added: PlacedAttachment[] = [];
 
-    for (const [offset, file] of files.entries()) {
-      const src = await readMediaFile(file);
-      const placement = await defaultAttachmentPlacement(
-        src,
-        letterPageBounds,
-        startIndex + offset,
-      );
-      added.push({ ...placement, id: crypto.randomUUID() });
+    for (const file of files) {
+      const sources = isPdfFile(file)
+        ? await (await import("../utils/renderPdfPage")).renderPdfPagesToDataUrls(
+            file,
+          )
+        : [await readMediaFile(file)];
+
+      for (const src of sources) {
+        const placement = await defaultAttachmentPlacement(
+          src,
+          letterPageBounds,
+          nextIndex,
+        );
+        added.push({ ...placement, id: crypto.randomUUID() });
+        nextIndex += 1;
+      }
     }
 
     if (added.length === 0) return;

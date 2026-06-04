@@ -148,6 +148,12 @@ export function PlacedImage({
     onDelete?.();
   };
 
+  const preventDeletePointerDrag = (
+    event: React.PointerEvent<HTMLButtonElement>,
+  ) => {
+    event.stopPropagation();
+  };
+
   return (
     <div
       data-testid="placed-image"
@@ -182,6 +188,7 @@ export function PlacedImage({
           type="button"
           aria-label={`Delete ${alt}`}
           data-testid="placed-image-delete"
+          onPointerDown={preventDeletePointerDrag}
           onClick={handleDelete}
           className="absolute -left-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white shadow hover:bg-red-700"
         >

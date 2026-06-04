@@ -1,46 +1,68 @@
 import React from "react";
 
 export type PerCustomerFieldProps = Readonly<{
+  label: string;
+  name: string;
   isExporting: boolean;
-  multiline: string;
-  onChangeMultiline: (value: string) => void;
-  clampToMaxLines: (value: string) => string;
+  value: string;
+  maxLength: number;
+  rows?: number;
+  height?: number;
+  onChange: (value: string) => void;
+  clampValue: (value: string, maxLength: number) => string;
 }>;
 
 export function PerCustomerField({
+  label,
+  name,
   isExporting,
-  multiline,
-  onChangeMultiline,
-  clampToMaxLines,
+  value,
+  maxLength,
+  rows = 3,
+  height = 92,
+  onChange,
+  clampValue,
 }: PerCustomerFieldProps) {
+  const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
+
+  React.useLayoutEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea || isExporting) return;
+    textarea.style.height = "auto";
+    textarea.style.height = `${Math.max(height, textarea.scrollHeight)}px`;
+  }, [height, isExporting, value]);
+
   return (
     <div
       className="mb-2 flex flex-row"
       style={rowStyle}
     >
       <p className="inline-block align-middle" style={labelBaseStyle}>
-        PER CUSTOMER:
+        {label}:
       </p>
 
       {/* Editable input (hidden during export so PDF captures full content) */}
       <div style={fieldContainerStyle}>
         {isExporting ? null : (
           <textarea
-            name="multiline"
-            placeholder="Up to 500 lines…"
-            value={multiline}
-            maxLength={500}
-            onChange={(e) => onChangeMultiline(clampToMaxLines(e.target.value))}
-            rows={8}
+            ref={textareaRef}
+            name={name}
+            placeholder={`Up to ${maxLength} characters...`}
+            value={value}
+            maxLength={maxLength}
+            onChange={(e) => onChange(clampValue(e.target.value, maxLength))}
+            rows={rows}
             style={{
               fontSize: "16px",
               width: "100%",
               resize: "none",
-              height: "100%",
+              minHeight: `${height}px`,
+              height: `${height}px`,
               padding: "0.5rem",
               border: "1px solid #d1d5db",
               borderRadius: "0.375rem",
               boxSizing: "border-box",
+              overflow: "hidden",
             }}
           />
         )}
@@ -58,10 +80,10 @@ export function PerCustomerField({
               boxSizing: "border-box",
               whiteSpace: "pre-wrap",
               overflowWrap: "anywhere",
-              minHeight: "2.5rem",
+              minHeight: `${height}px`,
             }}
           >
-            {multiline}
+            {value}
           </div>
         ) : null}
       </div>
@@ -85,5 +107,4 @@ const rowStyle: React.CSSProperties = {
 const fieldContainerStyle: React.CSSProperties = {
   flex: 1,
   width: "100%",
-  height: "180px",
 };

@@ -3,37 +3,43 @@ import { PerCustomerField } from "../../components/PerCustomerField";
 
 describe("PerCustomerField", () => {
   it("renders textarea when not exporting and pipes value through clamp", () => {
-    const onChangeMultiline = jest.fn();
-    const clampToMaxLines = jest.fn((value: string) => `clamped:${value}`);
+    const onChange = jest.fn();
+    const clampValue = jest.fn((value: string) => `clamped:${value}`);
 
     render(
       <PerCustomerField
+        label="PER CUSTOMER"
+        name="perCustomer"
         isExporting={false}
-        multiline=""
-        onChangeMultiline={onChangeMultiline}
-        clampToMaxLines={clampToMaxLines}
+        value=""
+        maxLength={500}
+        onChange={onChange}
+        clampValue={clampValue}
       />,
     );
 
-    const textarea = screen.getByPlaceholderText("Up to 500 lines…");
+    const textarea = screen.getByPlaceholderText("Up to 500 characters...");
     fireEvent.change(textarea, { target: { value: "line 1\nline 2" } });
 
-    expect(clampToMaxLines).toHaveBeenCalledWith("line 1\nline 2");
-    expect(onChangeMultiline).toHaveBeenCalledWith("clamped:line 1\nline 2");
+    expect(clampValue).toHaveBeenCalledWith("line 1\nline 2", 500);
+    expect(onChange).toHaveBeenCalledWith("clamped:line 1\nline 2");
   });
 
   it("renders PDF content view when exporting", () => {
     render(
       <PerCustomerField
+        label="PER CUSTOMER"
+        name="perCustomer"
         isExporting
-        multiline={"hello\nworld"}
-        onChangeMultiline={jest.fn()}
-        clampToMaxLines={(value) => value}
+        value={"hello\nworld"}
+        maxLength={500}
+        onChange={jest.fn()}
+        clampValue={(value) => value}
       />,
     );
 
     expect(
-      screen.queryByPlaceholderText("Up to 500 lines…"),
+      screen.queryByPlaceholderText("Up to 500 characters..."),
     ).not.toBeInTheDocument();
     expect(screen.getByText(/hello\s+world/)).toBeInTheDocument();
   });

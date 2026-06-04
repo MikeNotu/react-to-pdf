@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { PlacedImage } from "../../components/PlacedImage";
 import type { ImagePlacement } from "../../utils/readMediaFile";
 
@@ -53,6 +53,33 @@ describe("PlacedImage", () => {
     );
 
     expect(screen.getByLabelText("Delete Attachment 1")).toBeInTheDocument();
+  });
+
+  it("deletes without starting drag from delete button", () => {
+    const onDelete = jest.fn();
+    const onPlacementChange = jest.fn();
+    render(
+      <PlacedImage
+        placement={basePlacement}
+        onPlacementChange={onPlacementChange}
+        onDelete={onDelete}
+        isExporting={false}
+        bounds={{ width: 816, height: 1056 }}
+        alt="Attachment 1"
+      />,
+    );
+
+    const deleteButton = screen.getByTestId("placed-image-delete");
+    fireEvent.pointerDown(deleteButton, {
+      button: 0,
+      pointerId: 1,
+      clientX: 10,
+      clientY: 10,
+    });
+    fireEvent.click(deleteButton);
+
+    expect(onPlacementChange).not.toHaveBeenCalled();
+    expect(onDelete).toHaveBeenCalledTimes(1);
   });
 
   it("positions with absolute coordinates", () => {
