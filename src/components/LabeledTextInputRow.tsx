@@ -10,6 +10,7 @@ export type LabeledTextInputRowProps = Readonly<{
   placeholder: string;
   maxLength: number;
   required?: boolean;
+  isExporting?: boolean;
   alignItems?: AlignItems;
   labelClassName?: string;
 }>;
@@ -22,6 +23,7 @@ export function LabeledTextInputRow({
   placeholder,
   maxLength,
   required = true,
+  isExporting = false,
   alignItems = "baseline",
   labelClassName = "h-12 inline-block align-middle",
 }: LabeledTextInputRowProps) {
@@ -38,7 +40,7 @@ export function LabeledTextInputRow({
         required={required}
         value={value}
         onChange={onChange}
-        style={inputBaseStyle}
+        style={inputStyle(isExporting)}
       />
     </div>
   );
@@ -64,6 +66,19 @@ const inputBaseStyle: React.CSSProperties = {
   border: "1px solid #d1d5db",
   borderRadius: "0.125rem",
 };
+
+const inputStyle = (isExporting: boolean): React.CSSProperties => ({
+  ...inputBaseStyle,
+  ...(isExporting
+    ? {
+        border: "none",
+        borderRadius: 0,
+        backgroundColor: "transparent",
+        boxShadow: "none",
+        padding: 0,
+      }
+    : {}),
+});
 
 const rowStyle = (alignItems: AlignItems): React.CSSProperties => ({
   display: "flex",

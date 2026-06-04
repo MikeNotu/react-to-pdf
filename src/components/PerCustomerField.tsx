@@ -81,6 +81,14 @@ export function PerCustomerField({
               whiteSpace: "pre-wrap",
               overflowWrap: "anywhere",
               minHeight: `${height}px`,
+              ...(isExporting
+                ? {
+                    border: "none",
+                    borderRadius: 0,
+                    padding: 0,
+                    backgroundColor: "transparent",
+                  }
+                : {}),
             }}
           >
             {value}

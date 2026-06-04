@@ -11,6 +11,7 @@ export type LabeledDatePickerRowProps = Readonly<{
   onChange: (date: Date | null) => void;
   dateFormat: string;
   required?: boolean;
+  isExporting?: boolean;
   placeholderText?: string;
   alignItems?: AlignItems;
 }>;
@@ -22,6 +23,7 @@ export function LabeledDatePickerRow({
   onChange,
   dateFormat,
   required = true,
+  isExporting = false,
   placeholderText,
   alignItems = "baseline",
 }: LabeledDatePickerRowProps) {
@@ -41,7 +43,13 @@ export function LabeledDatePickerRow({
           required={required}
           placeholderText={placeholderText}
           wrapperClassName="w-full"
-          customInput={<input name={name} className="w-full" style={inputBaseStyle} />}
+          customInput={
+            <input
+              name={name}
+              className="w-full"
+              style={inputStyle(isExporting)}
+            />
+          }
         />
       </div>
     </div>
@@ -58,12 +66,29 @@ const labelBaseStyle: React.CSSProperties = {
 
 const inputBaseStyle: React.CSSProperties = {
   fontSize: "20px",
-  display: "flex",
-  height: "20px",
+  display: "block",
+  height: "30px",
+  lineHeight: "normal",
+  padding: "2px 0.375rem",
   flex: 1,
   width: "100%",
   boxSizing: "border-box",
+  border: "1px solid #d1d5db",
+  borderRadius: "0.125rem",
 };
+
+const inputStyle = (isExporting: boolean): React.CSSProperties => ({
+  ...inputBaseStyle,
+  ...(isExporting
+    ? {
+        border: "none",
+        borderRadius: 0,
+        backgroundColor: "transparent",
+        boxShadow: "none",
+        padding: 0,
+      }
+    : {}),
+});
 
 const fieldContainerStyle: React.CSSProperties = {
   flex: 1,

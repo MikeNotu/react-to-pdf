@@ -165,6 +165,7 @@ export const Invoice = () => {
                 onChange={updateField("serviceCallId")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
               />
               <LabeledDatePickerRow
                 label="Service Call Date"
@@ -172,6 +173,7 @@ export const Invoice = () => {
                 selected={dateOfService}
                 onChange={(date) => date && setDateOfService(date)}
                 dateFormat="MM/dd/yy"
+                isExporting={isExporting}
               />
               <LabeledTextInputRow
                 label="Supplier"
@@ -180,6 +182,7 @@ export const Invoice = () => {
                 onChange={updateField("supplier")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
               />
               <LabeledTextInputRow
                 label="Repair Facility"
@@ -188,6 +191,7 @@ export const Invoice = () => {
                 onChange={updateField("customerName")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
               />
               <LabeledTextInputRow
                 label="Phone"
@@ -196,6 +200,7 @@ export const Invoice = () => {
                 onChange={updateField("phone")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
               />
               <LabeledTextInputRow
                 label="Email"
@@ -204,6 +209,7 @@ export const Invoice = () => {
                 onChange={updateField("invoicePrimary")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
               />
               <LabeledTextInputRow
                 label="Invoice"
@@ -212,6 +218,7 @@ export const Invoice = () => {
                 onChange={updateField("invoiceSecondary")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
               />
               <LabeledDatePickerRow
                 label="Invoice Date"
@@ -220,6 +227,7 @@ export const Invoice = () => {
                 onChange={(date) => setDateOfIncident(date)}
                 dateFormat="MM/dd/yy"
                 placeholderText="MM/DD/YY"
+                isExporting={isExporting}
               />
               <LabeledTextInputRow
                 label="Model"
@@ -228,6 +236,7 @@ export const Invoice = () => {
                 onChange={updateField("model")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
               />
               <LabeledTextInputRow
                 label="VIN"
@@ -236,6 +245,7 @@ export const Invoice = () => {
                 onChange={updateField("vin")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
               />
               <LabeledTextInputRow
                 label="Original Mileage"
@@ -244,6 +254,7 @@ export const Invoice = () => {
                 onChange={updateField("originalMileage")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
               />
               <LabeledTextInputRow
                 label="Current Mileage"
@@ -252,6 +263,7 @@ export const Invoice = () => {
                 onChange={updateField("currentMileage")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
                 alignItems="center"
               />
               <LabeledTextInputRow
@@ -261,6 +273,7 @@ export const Invoice = () => {
                 onChange={updateField("transmission")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
                 alignItems="center"
               />
               <LabeledTextInputRow
@@ -270,6 +283,7 @@ export const Invoice = () => {
                 onChange={updateField("serialNumber")}
                 placeholder="----------"
                 maxLength={20}
+                isExporting={isExporting}
                 alignItems="center"
               />
               <LabeledTextInputRow
@@ -279,6 +293,7 @@ export const Invoice = () => {
                 onChange={updateField("tested")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
                 alignItems="center"
               />
               <LabeledTextInputRow
@@ -288,6 +303,7 @@ export const Invoice = () => {
                 onChange={updateField("programming")}
                 placeholder="----------"
                 maxLength={70}
+                isExporting={isExporting}
                 alignItems="center"
               />
               <PerCustomerField
