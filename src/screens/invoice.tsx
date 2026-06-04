@@ -1,16 +1,16 @@
 import React from "react";
-import { MediaFilePickerButton } from "../components/MediaFilePickerButton";
 import { PlacedImage } from "../components/PlacedImage";
 import { LabeledDatePickerRow } from "../components/LabeledDatePickerRow";
 import { LabeledTextInputRow } from "../components/LabeledTextInputRow";
 import { PerCustomerField } from "../components/PerCustomerField";
 import { useDocument } from "../context/DocumentContext";
-import { letterPageBounds, letterPageStyle } from "../constants/letterPageStyles";
-import { MEDIA_FILE_ERROR } from "../constants/mediaFiles";
+import {
+  letterPageBounds,
+  letterPageStyle,
+} from "../constants/letterPageStyles";
+import carLogo from "../assets/CarLogo.jpg";
 import {
   defaultLogoPlacement,
-  isMediaFile,
-  readMediaFile,
   type ImagePlacement,
 } from "../utils/readMediaFile";
 
@@ -36,9 +36,8 @@ export const Invoice = () => {
   });
   const [perCustomer, setPerCustomer] = React.useState("");
   const [activities, setActivities] = React.useState("");
-  const [logoPlacement, setLogoPlacement] = React.useState<ImagePlacement | null>(
-    null,
-  );
+  const [logoPlacement, setLogoPlacement] =
+    React.useState<ImagePlacement | null>(null);
 
   const { isExporting, registerInvoicePrintRef, downloadPdf } = useDocument();
 
@@ -62,27 +61,33 @@ export const Invoice = () => {
       }));
     };
 
-  const handleLogoFilesSelected = async (files: File[]) => {
-    const file = files[0];
-    if (!file) return;
-
-    if (!isMediaFile(file)) {
-      throw new Error(MEDIA_FILE_ERROR);
-    }
-
-    const src = await readMediaFile(file);
-    const placement = await defaultLogoPlacement(src, letterPageBounds);
-    setLogoPlacement(placement);
-  };
-
-  const handleRemoveLogo = () => {
-    setLogoPlacement(null);
-  };
-
   const setPrintRef = (element: HTMLDivElement | null) => {
     printRef.current = element;
     registerInvoicePrintRef(element);
   };
+
+  React.useEffect(() => {
+    let mounted = true;
+    const setDefaultLogo = async () => {
+      try {
+        const placement = await defaultLogoPlacement(carLogo, letterPageBounds);
+        if (mounted) setLogoPlacement(placement);
+      } catch {
+        if (!mounted) return;
+        setLogoPlacement({
+          src: carLogo,
+          x: letterPageBounds.width - 136,
+          y: 16,
+          width: 120,
+          height: 80,
+        });
+      }
+    };
+    void setDefaultLogo();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   React.useEffect(() => {
     const form = formRef.current;
@@ -148,179 +153,170 @@ export const Invoice = () => {
                 alt="Company logo"
               />
             ) : null}
-            <form ref={formRef} className="flex flex-col" style={formScaleStyle}>
-            <LabeledTextInputRow
-              label="Service Call ID"
-              name="Service Call ID"
-              value={formData.serviceCallId}
-              onChange={updateField("serviceCallId")}
-              placeholder="----------"
-              maxLength={70}
-            />
-            <LabeledDatePickerRow
-              label="Service Call Date"
-              name="dateOfService"
-              selected={dateOfService}
-              onChange={(date) => date && setDateOfService(date)}
-              dateFormat="MM/dd/yy"
-            />
-            <LabeledTextInputRow
-              label="Supplier"
-              name="Supplier"
-              value={formData.supplier}
-              onChange={updateField("supplier")}
-              placeholder="----------"
-              maxLength={70}
-            />
-            <LabeledTextInputRow
-              label="Repair Facility"
-              name="Repair Facility"
-              value={formData.customerName}
-              onChange={updateField("customerName")}
-              placeholder="----------"
-              maxLength={70}
-            />
-            <LabeledTextInputRow
-              label="Phone"
-              name="Phone"
-              value={formData.phone}
-              onChange={updateField("phone")}
-              placeholder="----------"
-              maxLength={70}
-            />
-            <LabeledTextInputRow
-              label="Email"
-              name="Email"
-              value={formData.invoicePrimary}
-              onChange={updateField("invoicePrimary")}
-              placeholder="----------"
-              maxLength={70}
-            />
-            <LabeledTextInputRow
-              label="Invoice"
-              name="Invoice"
-              value={formData.invoiceSecondary}
-              onChange={updateField("invoiceSecondary")}
-              placeholder="----------"
-              maxLength={70}
-            />
-            <LabeledDatePickerRow
-              label="Invoice Date"
-              name="dateOfIncident"
-              selected={dateOfIncident}
-              onChange={(date) => setDateOfIncident(date)}
-              dateFormat="MM/dd/yy"
-              placeholderText="MM/DD/YY"
-            />
-            <LabeledTextInputRow
-              label="Model"
-              name="Model"
-              value={formData.model}
-              onChange={updateField("model")}
-              placeholder="----------"
-              maxLength={70}
-            />
-            <LabeledTextInputRow
-              label="VIN"
-              name="VIN"
-              value={formData.vin}
-              onChange={updateField("vin")}
-              placeholder="----------"
-              maxLength={70}
-            />
-            <LabeledTextInputRow
-              label="Original Mileage"
-              name="Original Mileage"
-              value={formData.originalMileage}
-              onChange={updateField("originalMileage")}
-              placeholder="----------"
-              maxLength={70}
-            />
-            <LabeledTextInputRow
-              label="Current Mileage"
-              name="Current Mileage"
-              value={formData.currentMileage}
-              onChange={updateField("currentMileage")}
-              placeholder="----------"
-              maxLength={70}
-              alignItems="center"
-            />
-            <LabeledTextInputRow
-              label="Transmission"
-              name="Transmission"
-              value={formData.transmission}
-              onChange={updateField("transmission")}
-              placeholder="----------"
-              maxLength={70}
-              alignItems="center"
-            />
-            <LabeledTextInputRow
-              label="Serial Number"
-              name="Serial Number"
-              value={formData.serialNumber}
-              onChange={updateField("serialNumber")}
-              placeholder="----------"
-              maxLength={20}
-              alignItems="center"
-            />
-            <LabeledTextInputRow
-              label="Tested"
-              name="Tested"
-              value={formData.tested}
-              onChange={updateField("tested")}
-              placeholder="----------"
-              maxLength={70}
-              alignItems="center"
-            />
-            <LabeledTextInputRow
-              label="Programming"
-              name="Programming"
-              value={formData.programming}
-              onChange={updateField("programming")}
-              placeholder="----------"
-              maxLength={70}
-              alignItems="center"
-            />
-            <PerCustomerField
-              label="PER CUSTOMER"
-              name="perCustomer"
-              isExporting={isExporting}
-              value={perCustomer}
-              maxLength={500}
-              rows={3}
-              height={92}
-              onChange={setPerCustomer}
-              clampValue={clampToMaxLength}
-            />
-            <PerCustomerField
-              label="ACTIVITIES"
-              name="activities"
-              isExporting={isExporting}
-              value={activities}
-              maxLength={600}
-              rows={3}
-              height={92}
-              onChange={setActivities}
-              clampValue={clampToMaxLength}
-            />
-          </form>
+            <form
+              ref={formRef}
+              className="flex flex-col"
+              style={formScaleStyle}
+            >
+              <LabeledTextInputRow
+                label="Service Call ID"
+                name="Service Call ID"
+                value={formData.serviceCallId}
+                onChange={updateField("serviceCallId")}
+                placeholder="----------"
+                maxLength={70}
+              />
+              <LabeledDatePickerRow
+                label="Service Call Date"
+                name="dateOfService"
+                selected={dateOfService}
+                onChange={(date) => date && setDateOfService(date)}
+                dateFormat="MM/dd/yy"
+              />
+              <LabeledTextInputRow
+                label="Supplier"
+                name="Supplier"
+                value={formData.supplier}
+                onChange={updateField("supplier")}
+                placeholder="----------"
+                maxLength={70}
+              />
+              <LabeledTextInputRow
+                label="Repair Facility"
+                name="Repair Facility"
+                value={formData.customerName}
+                onChange={updateField("customerName")}
+                placeholder="----------"
+                maxLength={70}
+              />
+              <LabeledTextInputRow
+                label="Phone"
+                name="Phone"
+                value={formData.phone}
+                onChange={updateField("phone")}
+                placeholder="----------"
+                maxLength={70}
+              />
+              <LabeledTextInputRow
+                label="Email"
+                name="Email"
+                value={formData.invoicePrimary}
+                onChange={updateField("invoicePrimary")}
+                placeholder="----------"
+                maxLength={70}
+              />
+              <LabeledTextInputRow
+                label="Invoice"
+                name="Invoice"
+                value={formData.invoiceSecondary}
+                onChange={updateField("invoiceSecondary")}
+                placeholder="----------"
+                maxLength={70}
+              />
+              <LabeledDatePickerRow
+                label="Invoice Date"
+                name="dateOfIncident"
+                selected={dateOfIncident}
+                onChange={(date) => setDateOfIncident(date)}
+                dateFormat="MM/dd/yy"
+                placeholderText="MM/DD/YY"
+              />
+              <LabeledTextInputRow
+                label="Model"
+                name="Model"
+                value={formData.model}
+                onChange={updateField("model")}
+                placeholder="----------"
+                maxLength={70}
+              />
+              <LabeledTextInputRow
+                label="VIN"
+                name="VIN"
+                value={formData.vin}
+                onChange={updateField("vin")}
+                placeholder="----------"
+                maxLength={70}
+              />
+              <LabeledTextInputRow
+                label="Original Mileage"
+                name="Original Mileage"
+                value={formData.originalMileage}
+                onChange={updateField("originalMileage")}
+                placeholder="----------"
+                maxLength={70}
+              />
+              <LabeledTextInputRow
+                label="Current Mileage"
+                name="Current Mileage"
+                value={formData.currentMileage}
+                onChange={updateField("currentMileage")}
+                placeholder="----------"
+                maxLength={70}
+                alignItems="center"
+              />
+              <LabeledTextInputRow
+                label="Transmission"
+                name="Transmission"
+                value={formData.transmission}
+                onChange={updateField("transmission")}
+                placeholder="----------"
+                maxLength={70}
+                alignItems="center"
+              />
+              <LabeledTextInputRow
+                label="Serial Number"
+                name="Serial Number"
+                value={formData.serialNumber}
+                onChange={updateField("serialNumber")}
+                placeholder="----------"
+                maxLength={20}
+                alignItems="center"
+              />
+              <LabeledTextInputRow
+                label="Tested"
+                name="Tested"
+                value={formData.tested}
+                onChange={updateField("tested")}
+                placeholder="----------"
+                maxLength={70}
+                alignItems="center"
+              />
+              <LabeledTextInputRow
+                label="Programming"
+                name="Programming"
+                value={formData.programming}
+                onChange={updateField("programming")}
+                placeholder="----------"
+                maxLength={70}
+                alignItems="center"
+              />
+              <PerCustomerField
+                label="PER CUSTOMER"
+                name="perCustomer"
+                isExporting={isExporting}
+                value={perCustomer}
+                maxLength={500}
+                rows={3}
+                height={92}
+                onChange={setPerCustomer}
+                clampValue={clampToMaxLength}
+              />
+              <PerCustomerField
+                label="ACTIVITIES"
+                name="activities"
+                isExporting={isExporting}
+                value={activities}
+                maxLength={600}
+                rows={3}
+                height={92}
+                onChange={setActivities}
+                clampValue={clampToMaxLength}
+              />
+            </form>
           </div>
         </div>
 
         <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <MediaFilePickerButton
-            label={logoPlacement ? "Change Logo" : "Add Logo"}
-            onFilesSelected={handleLogoFilesSelected}
-          />
-          {logoPlacement ? (
-            <button
-              type="button"
-              onClick={handleRemoveLogo}
-              className="flex items-center bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition duration-300"
-            >
-              Remove Logo
-            </button>
-          ) : null}
           <button
             ref={downloadButtonRef}
             type="button"
@@ -339,4 +335,6 @@ const formScaleStyle: React.CSSProperties = {
   transform: "scale(0.68)",
   transformOrigin: "top left",
   width: "147.059%",
+  paddingTop: "160px",
+  boxSizing: "border-box",
 };

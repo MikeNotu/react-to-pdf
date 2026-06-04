@@ -54,11 +54,15 @@ const labelBaseStyle: React.CSSProperties = {
 
 const inputBaseStyle: React.CSSProperties = {
   fontSize: "20px",
-  display: "flex",
-  height: "20px",
+  display: "block",
+  height: "30px",
+  lineHeight: "normal",
+  padding: "2px 0.375rem",
   flex: 1,
   width: "100%",
   boxSizing: "border-box",
+  border: "1px solid #d1d5db",
+  borderRadius: "0.125rem",
 };
 
 const rowStyle = (alignItems: AlignItems): React.CSSProperties => ({
