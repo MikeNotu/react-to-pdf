@@ -9,7 +9,7 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
 
 export function AppNav() {
   return (
-    <nav className="w-full max-w-6xl mx-auto px-4 pt-4 flex gap-2">
+    <nav className="w-full max-w-6xl mx-auto px-2 sm:px-4 pt-2 sm:pt-4 flex gap-2">
       <NavLink to="/" className={linkClass} end>
         Service Form
       </NavLink>

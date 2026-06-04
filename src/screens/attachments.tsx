@@ -1,9 +1,10 @@
 import React from "react";
 import { MediaFilePickerButton } from "../components/MediaFilePickerButton";
 import { PlacedImage } from "../components/PlacedImage";
+import { ResponsivePage } from "../components/ResponsivePage";
 import { useDocument } from "../context/DocumentContext";
 import { MEDIA_FILE_ERROR } from "../constants/mediaFiles";
-import { letterPageBounds, letterPageStyle } from "../constants/letterPageStyles";
+import { letterPageBounds } from "../constants/letterPageStyles";
 import {
   createAttachmentPage,
   type AttachmentPage,
@@ -138,18 +139,18 @@ export const Attachments = () => {
   const activePageIndex = pages.findIndex((page) => page.id === activePageId);
 
   return (
-    <div className="flex-1 bg-gray-100 px-4 pb-4 flex flex-col items-center overflow-hidden">
-      <div className="bg-white shadow-lg rounded-lg p-4 w-full max-w-6xl flex flex-col items-center overflow-hidden">
-        <h1 className="text-xl font-semibold text-gray-800 mb-2 self-start">
+    <div className="flex-1 bg-gray-100 px-2 sm:px-4 pb-4 flex flex-col items-center overflow-hidden">
+      <div className="bg-white shadow-lg rounded-lg p-2 sm:p-4 w-full max-w-6xl flex flex-col items-center overflow-hidden">
+        <h1 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 self-start">
           Attachments
         </h1>
-        <p className="text-sm text-gray-600 mb-4 self-start">
+        <p className="text-xs sm:text-sm text-gray-600 mb-4 self-start">
           Create multiple pages, add JPG/PNG/PDF files to each, then drag,
           resize, or delete them. Download PDF includes the Service Form first,
           then every attachment page that has files.
         </p>
 
-        <div className="w-full flex flex-wrap items-center gap-2 mb-4 self-start">
+        <div className="w-full flex flex-wrap items-center gap-2 mb-4 self-start overflow-x-auto">
           {pages.map((page, index) => (
             <button
               key={page.id}
@@ -183,11 +184,11 @@ export const Attachments = () => {
           ) : null}
         </div>
 
-        <div className="w-full overflow-auto flex justify-center max-h-[calc(100vh-18rem)]">
-          <div
-            ref={setPrintRef}
-            className="bg-white border border-gray-200 shrink-0"
-            style={letterPageStyle}
+        <div className="w-full overflow-auto flex justify-center max-h-[calc(100vh-16rem)] sm:max-h-[calc(100vh-18rem)]">
+          <ResponsivePage
+            pageRef={setPrintRef}
+            isExporting={isExporting}
+            className="bg-white border border-gray-200"
           >
             {items.map((item, index) => (
               <PlacedImage
@@ -202,19 +203,20 @@ export const Attachments = () => {
                 zIndex={item.id === activeItemId ? 30 : 20 + index}
               />
             ))}
-          </div>
+          </ResponsivePage>
         </div>
 
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <div className="mt-4 sm:mt-6 flex flex-wrap justify-center gap-3 w-full">
           <MediaFilePickerButton
             label="Add Files"
             multiple
             onFilesSelected={handleFilesSelected}
+            className="flex items-center bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 w-full sm:w-auto justify-center"
           />
           <button
             type="button"
             onClick={downloadPdf}
-            className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
+            className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 w-full sm:w-auto justify-center"
           >
             Download PDF
           </button>

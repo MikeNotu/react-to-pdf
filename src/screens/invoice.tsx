@@ -3,11 +3,9 @@ import { PlacedImage } from "../components/PlacedImage";
 import { LabeledDatePickerRow } from "../components/LabeledDatePickerRow";
 import { LabeledTextInputRow } from "../components/LabeledTextInputRow";
 import { PerCustomerField } from "../components/PerCustomerField";
+import { ResponsivePage } from "../components/ResponsivePage";
 import { useDocument } from "../context/DocumentContext";
-import {
-  letterPageBounds,
-  letterPageStyle,
-} from "../constants/letterPageStyles";
+import { letterPageBounds } from "../constants/letterPageStyles";
 import carLogo from "../assets/CarLogo.jpg";
 import {
   defaultLogoPlacement,
@@ -136,13 +134,13 @@ export const Invoice = () => {
   }, []);
 
   return (
-    <div className="flex-1 bg-gray-100 px-4 pb-4 flex flex-col items-center overflow-hidden">
-      <div className="bg-white shadow-lg rounded-lg p-4 w-full max-w-6xl flex flex-col items-center overflow-hidden">
-        <div className="w-full overflow-auto flex justify-center max-h-[calc(100vh-12rem)]">
-          <div
-            ref={setPrintRef}
-            className="bg-white border border-gray-200 shrink-0"
-            style={letterPageStyle}
+    <div className="flex-1 bg-gray-100 px-2 sm:px-4 pb-4 flex flex-col items-center overflow-hidden">
+      <div className="bg-white shadow-lg rounded-lg p-2 sm:p-4 w-full max-w-6xl flex flex-col items-center overflow-hidden">
+        <div className="w-full overflow-auto flex justify-center max-h-[calc(100vh-10rem)] sm:max-h-[calc(100vh-12rem)]">
+          <ResponsivePage
+            pageRef={setPrintRef}
+            isExporting={isExporting}
+            className="bg-white border border-gray-200"
           >
             {logoPlacement ? (
               <PlacedImage
@@ -329,15 +327,15 @@ export const Invoice = () => {
                 clampValue={clampToMaxLength}
               />
             </form>
-          </div>
+          </ResponsivePage>
         </div>
 
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <div className="mt-4 sm:mt-6 flex flex-wrap justify-center gap-3">
           <button
             ref={downloadButtonRef}
             type="button"
             onClick={downloadPdf}
-            className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
+            className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 w-full sm:w-auto"
           >
             Download PDF
           </button>
