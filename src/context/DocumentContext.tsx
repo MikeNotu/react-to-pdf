@@ -8,11 +8,26 @@ import {
   captureLetterPageElement,
   exportLetterPagesFromDataUrls,
 } from "../utils/exportLetterPage";
+import type { ImagePlacement } from "../utils/readMediaFile";
+import {
+  saveDocumentData,
+  loadDocumentData,
+  type SavedFormData,
+} from "../utils/saveLoadData";
 
 const waitForPaint = () =>
   new Promise<void>((resolve) =>
     requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
   );
+
+export type InvoiceFormData = {
+  formData: SavedFormData;
+  perCustomer: string;
+  activities: string;
+  dateOfService: Date;
+  dateOfIncident: Date | null;
+  logoPlacement: ImagePlacement | null;
+};
 
 type DocumentContextValue = {
   isExporting: boolean;
@@ -26,6 +41,10 @@ type DocumentContextValue = {
   registerInvoicePrintRef: (element: HTMLDivElement | null) => void;
   registerAttachmentPrintRef: (element: HTMLDivElement | null) => void;
   downloadPdf: () => Promise<void>;
+  invoiceData: InvoiceFormData;
+  setInvoiceData: (data: InvoiceFormData | ((prev: InvoiceFormData) => InvoiceFormData)) => void;
+  saveAllData: (fileName?: string) => Promise<void>;
+  loadAllData: (file: File) => Promise<void>;
 };
 
 const DocumentContext = React.createContext<DocumentContextValue | null>(null);
@@ -44,6 +63,30 @@ export function DocumentProvider({
     React.useState(initialPage.id);
   const [isExporting, setIsExporting] = React.useState(false);
   const [resetVersion, setResetVersion] = React.useState(0);
+
+  const [invoiceData, setInvoiceData] = React.useState<InvoiceFormData>({
+    formData: {
+      serviceCallId: "",
+      supplier: "",
+      customerName: "",
+      phone: "",
+      invoicePrimary: "",
+      invoiceSecondary: "",
+      model: "",
+      vin: "",
+      originalMileage: "",
+      currentMileage: "",
+      transmission: "",
+      serialNumber: "",
+      tested: "",
+      programming: "",
+    },
+    perCustomer: "",
+    activities: "",
+    dateOfService: new Date(),
+    dateOfIncident: null,
+    logoPlacement: null,
+  });
 
   const hasAttachmentContent = attachmentPages.some(
     (page) => page.items.length > 0,
@@ -111,6 +154,59 @@ export function DocumentProvider({
     const nextInitialPage = createAttachmentPage();
     setAttachmentPages([nextInitialPage]);
     setActiveAttachmentPageId(nextInitialPage.id);
+    setInvoiceData({
+      formData: {
+        serviceCallId: "",
+        supplier: "",
+        customerName: "",
+        phone: "",
+        invoicePrimary: "",
+        invoiceSecondary: "",
+        model: "",
+        vin: "",
+        originalMileage: "",
+        currentMileage: "",
+        transmission: "",
+        serialNumber: "",
+        tested: "",
+        programming: "",
+      },
+      perCustomer: "",
+      activities: "",
+      dateOfService: new Date(),
+      dateOfIncident: null,
+      logoPlacement: null,
+    });
+    setResetVersion((current) => current + 1);
+  }, []);
+
+  const saveAllData = React.useCallback(async (fileName?: string) => {
+    await saveDocumentData({
+      formData: invoiceData.formData,
+      perCustomer: invoiceData.perCustomer,
+      activities: invoiceData.activities,
+      dateOfService: invoiceData.dateOfService,
+      dateOfIncident: invoiceData.dateOfIncident,
+      logoPlacement: invoiceData.logoPlacement,
+      attachmentPages,
+      fileName,
+    });
+  }, [invoiceData, attachmentPages]);
+
+  const loadAllData = React.useCallback(async (file: File) => {
+    const data = await loadDocumentData(file);
+    
+    setInvoiceData({
+      formData: data.formData,
+      perCustomer: data.perCustomer,
+      activities: data.activities,
+      dateOfService: data.dateOfService ? new Date(data.dateOfService) : new Date(),
+      dateOfIncident: data.dateOfIncident ? new Date(data.dateOfIncident) : null,
+      logoPlacement: data.logoPlacement,
+    });
+    
+    setAttachmentPages(data.attachmentPages);
+    setActiveAttachmentPageId(data.attachmentPages[0]?.id ?? "");
     setResetVersion((current) => current + 1);
   }, []);
 
@@ -127,6 +223,10 @@ export function DocumentProvider({
       registerInvoicePrintRef,
       registerAttachmentPrintRef,
       downloadPdf,
+      invoiceData,
+      setInvoiceData,
+      saveAllData,
+      loadAllData,
     }),
     [
       isExporting,
@@ -138,6 +238,9 @@ export function DocumentProvider({
       registerInvoicePrintRef,
       registerAttachmentPrintRef,
       downloadPdf,
+      invoiceData,
+      saveAllData,
+      loadAllData,
     ],
   );
 

@@ -16,36 +16,16 @@ export const Invoice = () => {
   const printRef = React.useRef<HTMLDivElement | null>(null);
   const formRef = React.useRef<HTMLFormElement | null>(null);
   const downloadButtonRef = React.useRef<HTMLButtonElement | null>(null);
-  const [formData, setFormData] = React.useState({
-    serviceCallId: "",
-    supplier: "",
-    customerName: "",
-    phone: "",
-    invoicePrimary: "",
-    invoiceSecondary: "",
-    model: "",
-    vin: "",
-    originalMileage: "",
-    currentMileage: "",
-    transmission: "",
-    serialNumber: "",
-    tested: "",
-    programming: "",
-  });
-  const [perCustomer, setPerCustomer] = React.useState("");
-  const [activities, setActivities] = React.useState("");
-  const [logoPlacement, setLogoPlacement] =
-    React.useState<ImagePlacement | null>(null);
 
   const {
     isExporting,
     registerInvoicePrintRef,
     downloadPdf,
-    resetVersion,
+    invoiceData,
+    setInvoiceData,
   } = useDocument();
 
-  const [dateOfService, setDateOfService] = React.useState<Date>(new Date());
-  const [dateOfIncident, setDateOfIncident] = React.useState<Date | null>(null);
+  const { formData, perCustomer, activities, dateOfService, dateOfIncident, logoPlacement } = invoiceData;
 
   const normalizeNewlines = (value: string) => value.split("\r\n").join("\n");
 
@@ -58,34 +38,50 @@ export const Invoice = () => {
   const updateField =
     (field: keyof typeof formData) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((current) => ({
+      setInvoiceData((current) => ({
         ...current,
-        [field]: e.target.value,
+        formData: {
+          ...current.formData,
+          [field]: e.target.value,
+        },
       }));
     };
 
-  React.useEffect(() => {
-    setFormData({
-      serviceCallId: "",
-      supplier: "",
-      customerName: "",
-      phone: "",
-      invoicePrimary: "",
-      invoiceSecondary: "",
-      model: "",
-      vin: "",
-      originalMileage: "",
-      currentMileage: "",
-      transmission: "",
-      serialNumber: "",
-      tested: "",
-      programming: "",
-    });
-    setPerCustomer("");
-    setActivities("");
-    setDateOfService(new Date());
-    setDateOfIncident(null);
-  }, [resetVersion]);
+  const setPerCustomer = (value: string) => {
+    setInvoiceData((current) => ({
+      ...current,
+      perCustomer: value,
+    }));
+  };
+
+  const setActivities = (value: string) => {
+    setInvoiceData((current) => ({
+      ...current,
+      activities: value,
+    }));
+  };
+
+  const setDateOfService = (date: Date) => {
+    setInvoiceData((current) => ({
+      ...current,
+      dateOfService: date,
+    }));
+  };
+
+  const setDateOfIncident = (date: Date | null) => {
+    setInvoiceData((current) => ({
+      ...current,
+      dateOfIncident: date,
+    }));
+  };
+
+  const setLogoPlacement = (placement: ImagePlacement | null) => {
+    setInvoiceData((current) => ({
+      ...current,
+      logoPlacement: placement,
+    }));
+  };
+
 
   const setPrintRef = (element: HTMLDivElement | null) => {
     printRef.current = element;
