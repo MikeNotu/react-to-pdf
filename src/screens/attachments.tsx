@@ -30,9 +30,14 @@ export const Attachments = () => {
     setActiveAttachmentPageId: setActivePageId,
     registerAttachmentPrintRef,
     downloadPdf,
+    resetVersion,
   } = useDocument();
 
   pagesRef.current = pages;
+
+  React.useEffect(() => {
+    setActiveItemId(null);
+  }, [resetVersion]);
 
   const activePage = pages.find((page) => page.id === activePageId) ?? pages[0];
   const items = activePage?.items ?? [];

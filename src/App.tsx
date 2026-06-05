@@ -1,3 +1,4 @@
+import React from "react";
 import { HashRouter, Route, Routes, useLocation } from "react-router-dom";
 import { AppNav } from "./components/AppNav";
 import { DocumentProvider, useDocument } from "./context/DocumentContext";
@@ -44,16 +45,67 @@ function AppRoutes() {
   );
 }
 
+function AppShell() {
+  const { isExporting, clearAllAddedInput } = useDocument();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+
+  const handleConfirmDelete = () => {
+    clearAllAddedInput();
+    setIsDeleteModalOpen(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <AppNav
+        rightContent={
+          <button
+            type="button"
+            onClick={() => setIsDeleteModalOpen(true)}
+            disabled={isExporting}
+            className="px-3 py-2 rounded-md text-sm font-medium bg-red-600 text-white hover:bg-red-700 transition duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            Delete All
+          </button>
+        }
+      />
+      <Routes>
+        <Route path="*" element={<AppRoutes />} />
+      </Routes>
+
+      {isDeleteModalOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-sm rounded-lg bg-white p-5 shadow-xl">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Delete all added input
+            </h2>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition duration-300"
+              >
+                Confirm
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="px-4 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300 transition duration-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function App() {
   return (
     <HashRouter>
       <DocumentProvider>
-        <div className="min-h-screen bg-gray-100 flex flex-col">
-          <AppNav />
-          <Routes>
-            <Route path="*" element={<AppRoutes />} />
-          </Routes>
-        </div>
+        <AppShell />
       </DocumentProvider>
     </HashRouter>
   );

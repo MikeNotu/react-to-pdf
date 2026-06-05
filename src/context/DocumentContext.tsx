@@ -20,6 +20,8 @@ type DocumentContextValue = {
   setAttachmentPages: React.Dispatch<React.SetStateAction<AttachmentPage[]>>;
   activeAttachmentPageId: string;
   setActiveAttachmentPageId: (id: string) => void;
+  resetVersion: number;
+  clearAllAddedInput: () => void;
   hasAttachmentContent: boolean;
   registerInvoicePrintRef: (element: HTMLDivElement | null) => void;
   registerAttachmentPrintRef: (element: HTMLDivElement | null) => void;
@@ -28,7 +30,9 @@ type DocumentContextValue = {
 
 const DocumentContext = React.createContext<DocumentContextValue | null>(null);
 
-export function DocumentProvider({ children }: { children: React.ReactNode }) {
+export function DocumentProvider({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const initialPage = React.useMemo(() => createAttachmentPage(), []);
   const invoicePrintRef = React.useRef<HTMLDivElement | null>(null);
   const attachmentPrintRef = React.useRef<HTMLDivElement | null>(null);
@@ -39,6 +43,7 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
   const [activeAttachmentPageId, setActiveAttachmentPageId] =
     React.useState(initialPage.id);
   const [isExporting, setIsExporting] = React.useState(false);
+  const [resetVersion, setResetVersion] = React.useState(0);
 
   const hasAttachmentContent = attachmentPages.some(
     (page) => page.items.length > 0,
@@ -102,6 +107,13 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
     }
   }, [activeAttachmentPageId, attachmentPages]);
 
+  const clearAllAddedInput = React.useCallback(() => {
+    const nextInitialPage = createAttachmentPage();
+    setAttachmentPages([nextInitialPage]);
+    setActiveAttachmentPageId(nextInitialPage.id);
+    setResetVersion((current) => current + 1);
+  }, []);
+
   const value = React.useMemo(
     () => ({
       isExporting,
@@ -109,6 +121,8 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
       setAttachmentPages,
       activeAttachmentPageId,
       setActiveAttachmentPageId,
+      resetVersion,
+      clearAllAddedInput,
       hasAttachmentContent,
       registerInvoicePrintRef,
       registerAttachmentPrintRef,
@@ -118,6 +132,8 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
       isExporting,
       attachmentPages,
       activeAttachmentPageId,
+      resetVersion,
+      clearAllAddedInput,
       hasAttachmentContent,
       registerInvoicePrintRef,
       registerAttachmentPrintRef,

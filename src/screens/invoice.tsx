@@ -37,7 +37,12 @@ export const Invoice = () => {
   const [logoPlacement, setLogoPlacement] =
     React.useState<ImagePlacement | null>(null);
 
-  const { isExporting, registerInvoicePrintRef, downloadPdf } = useDocument();
+  const {
+    isExporting,
+    registerInvoicePrintRef,
+    downloadPdf,
+    resetVersion,
+  } = useDocument();
 
   const [dateOfService, setDateOfService] = React.useState<Date>(new Date());
   const [dateOfIncident, setDateOfIncident] = React.useState<Date | null>(null);
@@ -58,6 +63,29 @@ export const Invoice = () => {
         [field]: e.target.value,
       }));
     };
+
+  React.useEffect(() => {
+    setFormData({
+      serviceCallId: "",
+      supplier: "",
+      customerName: "",
+      phone: "",
+      invoicePrimary: "",
+      invoiceSecondary: "",
+      model: "",
+      vin: "",
+      originalMileage: "",
+      currentMileage: "",
+      transmission: "",
+      serialNumber: "",
+      tested: "",
+      programming: "",
+    });
+    setPerCustomer("");
+    setActivities("");
+    setDateOfService(new Date());
+    setDateOfIncident(null);
+  }, [resetVersion]);
 
   const setPrintRef = (element: HTMLDivElement | null) => {
     printRef.current = element;
