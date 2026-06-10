@@ -175,10 +175,10 @@ export function DocumentProvider({
       activities: "",
       dateOfService: new Date(),
       dateOfIncident: null,
-      logoPlacement: null,
+      logoPlacement: invoiceData.logoPlacement,
     });
     setResetVersion((current) => current + 1);
-  }, []);
+  }, [invoiceData.logoPlacement]);
 
   const saveAllData = React.useCallback(async (fileName?: string) => {
     await saveDocumentData({
